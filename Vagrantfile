@@ -19,8 +19,8 @@ $INSTALL2 = <<SCRIPT
   pip2 install pip --upgrade
   pip3 install pip --upgrade
 
-  pip2 install zeroc-ice
-  pip3 install zeroc-ice
+  /usr/local/bin/pip2 install zeroc-ice
+  /usr/local/bin/pip3 install zeroc-ice
 
   rm -Rf /opt/pox
   mkdir -p /opt/pox
