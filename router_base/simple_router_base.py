@@ -29,7 +29,7 @@ class SimpleRouterBase:
         self.ifNameToIpMap = {}
 
     def sendPacket(self, packet, outIface):
-        self.begin_sendPacket(packet, outIface)
+        self.pox.begin_sendPacket(packet, outIface)
 
     #
     # Load routing table information from \p rtConfig file
