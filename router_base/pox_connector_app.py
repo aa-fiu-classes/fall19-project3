@@ -56,6 +56,7 @@ class PoxConnectorApp(Ice.Application):
   
   def run(self, argv):
     rtFile = self.communicator().getProperties().getPropertyWithDefault("RoutingTable", "RTABLE")
+    self.router.getRoutingTable().load(rtFile)
 
     self.router.pox = pox.PacketInjectorPrx.checkedCast(self.communicator().propertyToProxy("SimpleRouter.Proxy").ice_twoway())
     if not self.router.pox:

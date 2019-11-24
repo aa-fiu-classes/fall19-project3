@@ -15,5 +15,5 @@
 from .pox_connector_app import PoxConnectorApp
 
 from .simple_router_base import SimpleRouterBase
-from .routing_table_base import RoutingTableBase
+from .routing_table_base import RoutingTableBase, RoutingTableEntry
 from .arp_cache_base import ArpCacheBase
