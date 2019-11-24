@@ -44,10 +44,10 @@ class Tester(pox.Tester):
         self.router = router
 
     def getArp(self, current):
-      return self.router.getArp()
+        return str(self.router.getArp())
 
     def getRoutingTable(self, current):
-      return self.router.getRoutingTable()
+        return str(self.router.getRoutingTable())
 
 class PoxConnectorApp(Ice.Application):
   def __init__(self, simpleRouter):

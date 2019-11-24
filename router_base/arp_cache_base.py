@@ -114,8 +114,10 @@ class ArpCacheBase:
         '''
 
         self.mutex.acquire()
-
-        self.arpRequests.remove(arpRequest)
+        try:
+            self.arpRequests.remove(arpRequest)
+        except:
+            pass
 
         self.mutex.release()
 
@@ -155,12 +157,12 @@ class ArpCacheBase:
     def __str__(self):
         self.mutex.acquire()
         f = io.StringIO()
-        print("\nMAC            IP         AGE                       VALID", file=f)
-        print("-----------------------------------------------------------", file=f)
-        
+        print(f"{'MAC':20} {'IP':18} {'AGE':20}  {'Is Valid'}", file=f)
+        print("----------------------------------------------------------------------", file=f)
+
         now = time.time()
         for entry in self.cacheEntries:
-            print(f"{entry.mac} {entry.ip} {now - entry.timeAdded} seconds {entry.isValid}", file=f)
+            print(f"{str(entry.mac):20} {str(entry.ip):18} {now - entry.timeAdded:12.2f} seconds  {entry.isValid}", file=f)
       
         self.mutex.release()
 
@@ -184,5 +186,4 @@ class ArpCacheBase:
 
             # calling the "implementation" method
             self.periodicCheckArpRequestsAndCacheEntries()
-
             self.mutex.release()
