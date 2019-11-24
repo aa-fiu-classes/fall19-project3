@@ -179,7 +179,7 @@ class ArpCacheBase:
 
             now = time.time()
             for entry in self.cacheEntries:
-                if entry.isValie and (now - entry.timeAdded > SR_ARPCACHE_TO):
+                if entry.isValid and (now - entry.timeAdded > SR_ARPCACHE_TO):
                     entry.isValid = False
 
             # calling the "implementation" method
