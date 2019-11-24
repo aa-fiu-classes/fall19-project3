@@ -20,20 +20,16 @@ from .ip_address import IpAddress
 
 SR_ARPCACHE_TO = 30
 
-class PendingPacket:
-    def __init__(self, packet, iface):
-        self.packet = packet
-        self.iface = iface
-
 class ArpRequest:
-    def __init__(self, ip):
+    def __init__(self, ip, iface):
       self.ip = ip
+      self.iface = iface
       self.nTimesSent = 0
       self.packets = []
 
       # Last time this ARP request was sent. You should update this. If
       # the ARP request was never sent, self.timeSent == None
-      self.timeSent = None
+      self.timeSent = time.time()
 
 class ArpEntry:
     def __init__(self, mac, ip):
@@ -49,7 +45,7 @@ class ArpCacheBase:
 
         self.shouldStop = False
 
-        self.mutex = threading.Lock()
+        self.mutex = threading.RLock()
         self.tickerThread = threading.Thread(target=self.__ticker)
         self.tickerThread.start()
 
@@ -90,22 +86,28 @@ class ArpCacheBase:
         
         A pointer to the ARP request is returned; it should not be freed. The caller
         can remove the ARP request from the queue by calling sr_arpreq_destroy.
+
+        :returns True if request for this IP already existed
         '''
 
         self.mutex.acquire()
 
         queuedRequest = None
+        requestExisted = False
         for request in self.arpRequests:
             if request.ip == ip:
                 queuedRequest = request
                 break
         if queuedRequest is None:
-            queuedRequest = ArpRequest(ip)
+            queuedRequest = ArpRequest(ip, iface)
             self.arpRequests.append(queuedRequest)
+        else:
+            requestExisted = True
 
-        queuedRequest.packets.append(PendingPacket(packet, iface))
+        queuedRequest.packets.append(packet)
         
         self.mutex.release()
+        return requestExisted
     
     def removeRequest(self, arpRequest):
         '''
@@ -184,6 +186,8 @@ class ArpCacheBase:
                 if entry.isValid and (now - entry.timeAdded > SR_ARPCACHE_TO):
                     entry.isValid = False
 
-            # calling the "implementation" method
-            self.periodicCheckArpRequestsAndCacheEntries()
-            self.mutex.release()
+            try:
+                # calling the "implementation" method
+                self.periodicCheckArpRequestsAndCacheEntries()
+            finally:
+                self.mutex.release()

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- Mode: python; py-indent-offset: 4; indent-tabs-mode: nil; coding: utf-8; -*-
 # Copyright 2017 Alex Afanasyev (UCLA)
 #
@@ -36,9 +36,9 @@ class Client(Ice.Application):
             raise RuntimeError("Invalid proxy")
 
         if len(args) < 2 or args[1] == "arp":
-            print tester.getArp()
+            print(tester.getArp())
         else:
-            print tester.getRoutingTable()
+            print(tester.getRoutingTable())
         return 0
  
 app = Client()
